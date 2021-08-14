@@ -25,6 +25,10 @@ public class SudokuBoard {
         return sBoard[i][j].current;
     }
 
+    public Block getBlock(int i, int j){
+        return sBoard[i][j];
+    }
+
 
 
     public void print() {
