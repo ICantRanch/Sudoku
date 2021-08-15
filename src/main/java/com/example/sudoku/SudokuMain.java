@@ -1,6 +1,7 @@
 package com.example.sudoku;
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -9,9 +10,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Set;
 
 public class SudokuMain extends Application {
+
+    //Start On The autosolve
+    GridPane grid;
+
+
 
     SudokuBoard board = new SudokuBoard(new int[][]{
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
@@ -24,7 +31,7 @@ public class SudokuMain extends Application {
             {0, 0, 0, 4, 1, 9, 0, 0, 5},
             {0, 0, 0, 0, 8, 0, 0, 7, 9}
     });
-
+    Node[][] nodes = new Node[board.length][board.length];
 
     public static void main(String[] args) {
         launch(args);
@@ -36,9 +43,11 @@ public class SudokuMain extends Application {
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
 
-        GridPane grid = new GridPane();
+        grid = new GridPane();
         grid.setGridLinesVisible(true);
 
+
+        //Inital Setup of Board
         for (int i = 0; i < board.sBoard.length; i++) {
             for (int j = 0; j < board.sBoard[0].length; j++) {
                 int temp = board.getCurrent(i, j);
@@ -50,6 +59,7 @@ public class SudokuMain extends Application {
                     temp2.setFont(new Font(20));
                     temp2.setAlignment(Pos.CENTER);
                     grid.add(temp2, i, j);
+                    nodes[i][j] = temp2;
                 }else{
                  //Add gridpane
                   GridPane poss = new GridPane();
@@ -64,6 +74,7 @@ public class SudokuMain extends Application {
                     }
                     poss.setAlignment(Pos.CENTER);
                     grid.add(poss,i,j);
+                    nodes[i][j] = poss;
                 }
             }
         }
@@ -76,5 +87,20 @@ public class SudokuMain extends Application {
         stage.setTitle("Sudoku");
         stage.setScene(scene);
         stage.show();
+
+        update();
+    }
+
+    public void update(){
+
+        for (Node[] nodeArr: nodes) {
+            for (Node node: nodeArr) {
+                //Sync with sboard
+                //You can cast to use subclass methods, like to change a label's text
+                //if (node instanceOf Label)
+            }
+        }
+
+
     }
 }

@@ -3,11 +3,12 @@ package com.example.sudoku;
 public class SudokuBoard {
 
     Block[][] sBoard;
+    int length;
 
     public SudokuBoard(int[][] startingBoard){
 
         sBoard = new Block[startingBoard.length][startingBoard[0].length];
-
+        length = sBoard.length;
 
         for (int i = 0; i < startingBoard.length; i++) {
             for (int j = 0; j < startingBoard[0].length; j++) {
