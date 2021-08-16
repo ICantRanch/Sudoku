@@ -1,5 +1,6 @@
 package com.example.sudoku;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -18,8 +19,6 @@ public class SudokuMain extends Application {
     //Start On The autosolve
     GridPane grid;
 
-
-
     SudokuBoard board = new SudokuBoard(new int[][]{
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
             {6, 0, 0, 1, 9, 5, 0, 0, 0},
@@ -31,6 +30,7 @@ public class SudokuMain extends Application {
             {0, 0, 0, 4, 1, 9, 0, 0, 5},
             {0, 0, 0, 0, 8, 0, 0, 7, 9}
     });
+
     Node[][] nodes = new Node[board.length][board.length];
 
     public static void main(String[] args) {
@@ -88,19 +88,64 @@ public class SudokuMain extends Application {
         stage.setScene(scene);
         stage.show();
 
-        update();
+        //board.getBlock(0,2).current = 1;
+
+        //update();
     }
 
     public void update(){
 
-        for (Node[] nodeArr: nodes) {
-            for (Node node: nodeArr) {
-                //Sync with sboard
-                //You can cast to use subclass methods, like to change a label's text
-                //if (node instanceOf Label)
+        for (int i = 0; i < nodes.length ; i++) {
+            for (int j = 0; j < nodes[0].length; j++) {
+                update(i,j);
+            }
+        }
+    }
+    public void update(int i, int j){
+
+        if(nodes[i][j] instanceof Label){
+            if(Integer.parseInt(((Label) nodes[i][j]).getText()) != board.getCurrent(i,j)){
+                ((Label) nodes[i][j]).setText(String.valueOf(board.getCurrent(i,j)));
+            }
+        }else{
+            if(nodes[i][j] instanceof GridPane){
+                if(board.getCurrent(i,j) == 0){
+                    //update gridpane, you can do it my the get children method, and just iterating through the possibles
+
+                    ObservableList<Node> possNodes = ((GridPane) nodes[i][j]).getChildren();
+                    GridPane poss = (GridPane)nodes[i][j];
+
+                    for (Node node: possNodes) {
+                        int index = poss.getRowIndex(node)*3 + poss.getColumnIndex(node);
+                        if(board.getBlock(i,j).possible.contains(index+1)){
+                            ((Label)node).setText(String.valueOf(index+1));
+                        }
+                    }
+
+
+                }else{
+                    //Check if there now is a current number, change to label if it is (try a method)
+                    Label temp3 = new Label();
+                    temp3.setText(String.valueOf(board.getCurrent(i,j)));
+                    temp3.setMinHeight(30);
+                    temp3.setMinWidth(30);
+                    temp3.setFont(new Font(20));
+                    temp3.setAlignment(Pos.CENTER);
+                    replaceNode(i,j,temp3);
+                }
+
+
+
+
             }
         }
 
+    }
+
+    public void replaceNode(int i, int j , Node node){
+
+        grid.getChildren().remove(nodes[i][j]);
+        grid.add(node,i,j);
 
     }
 }
