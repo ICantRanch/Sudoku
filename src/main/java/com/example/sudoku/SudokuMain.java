@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -114,23 +115,34 @@ public class SudokuMain extends Application {
 
         if(board[i][j].current == 0){return;}
 
-        System.out.println("Solving");
-
         int current = board[i][j].current;
 
         for (int k = 0; k < board.length; k++) {
             board[i][k].possible.remove(current);
-            System.out.println(board[i][k].possible.toString());
-
-            System.out.println("Still solving");
 
             if(board[i][k].possible.size() == 1){
                 board[i][k].current = board[i][k].possible.iterator().next();
-                System.out.println(board[i][k].current);
+                System.out.println("Solved: " + board[i][k].current);
                 update(i,k);
                 solve(i,k);
             }else{
                 update(i,k);
+            }
+        }
+
+        for (int k = 0; k < board.length; k++) {
+            board[k][j].possible.remove(current);
+
+            if(board[k][j].possible.size() == 1){
+                board[k][j].current = board[k][j].possible.iterator().next();
+                System.out.println("Solved: " + board[k][j].current);
+                update(k,j);
+
+
+
+                solve(k,j);
+            }else{
+                update(k,j);
             }
         }
 
@@ -159,7 +171,6 @@ public class SudokuMain extends Application {
                 if(board[i][j].current == 0){
                     //update gridpane, you can do it my the get children method, and just iterating through the possibles
 
-                    System.out.println("Possibles in update()" + board[i][j].possible.toString());
 
                     ObservableList<Node> possNodes = ((GridPane) nodes[i][j]).getChildren();
                     GridPane poss = (GridPane)nodes[i][j];
@@ -181,6 +192,7 @@ public class SudokuMain extends Application {
                     temp3.setMinHeight(30);
                     temp3.setMinWidth(30);
                     temp3.setFont(new Font(20));
+                    temp3.setTextFill(Color.LIMEGREEN);
                     temp3.setAlignment(Pos.CENTER);
                     replaceNode(i,j,temp3);
                 }
