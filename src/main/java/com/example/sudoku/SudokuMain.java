@@ -56,7 +56,7 @@ public class SudokuMain extends Application {
                     temp2.setMinWidth(30);
                     temp2.setFont(new Font(20));
                     temp2.setAlignment(Pos.CENTER);
-                    grid.add(temp2, i, j);
+                    grid.add(temp2, j, i);
                     nodes[i][j] = temp2;
                 }else{
                  //Add gridpane
@@ -71,7 +71,7 @@ public class SudokuMain extends Application {
                         }
                     }
                     poss.setAlignment(Pos.CENTER);
-                    grid.add(poss,i,j);
+                    grid.add(poss,j,i);
                     nodes[i][j] = poss;
                 }
             }
@@ -86,9 +86,11 @@ public class SudokuMain extends Application {
         stage.setScene(scene);
         stage.show();
 
-        board[0][2].current = 1;
-
-        update();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                solve(i,j);
+            }
+        }
     }
 
     public Block[][] makeBoard(int[][] starter){
@@ -106,6 +108,36 @@ public class SudokuMain extends Application {
             }
         }
         return sBoard;
+    }
+
+    public void solve(int i, int j){
+
+        if(board[i][j].current == 0){return;}
+
+        System.out.println("Solving");
+
+        int current = board[i][j].current;
+
+        for (int k = 0; k < board.length; k++) {
+            board[i][k].possible.remove(current);
+            System.out.println(board[i][k].possible.toString());
+
+            System.out.println("Still solving");
+
+            if(board[i][k].possible.size() == 1){
+                board[i][k].current = board[i][k].possible.iterator().next();
+                System.out.println(board[i][k].current);
+                update(i,k);
+                solve(i,k);
+            }else{
+                update(i,k);
+            }
+        }
+
+        //for each block in a row or column, remove the possible and test if possibles has only 1 remaining
+
+
+
     }
 
     public void update(){
@@ -127,11 +159,15 @@ public class SudokuMain extends Application {
                 if(board[i][j].current == 0){
                     //update gridpane, you can do it my the get children method, and just iterating through the possibles
 
+                    System.out.println("Possibles in update()" + board[i][j].possible.toString());
+
                     ObservableList<Node> possNodes = ((GridPane) nodes[i][j]).getChildren();
                     GridPane poss = (GridPane)nodes[i][j];
 
                     for (Node node: possNodes) {
                         int index = poss.getRowIndex(node)*3 + poss.getColumnIndex(node);
+                        ((Label)node).setText("");
+
                         if(board[i][j].possible.contains(index+1)){
                             ((Label)node).setText(String.valueOf(index+1));
                         }
