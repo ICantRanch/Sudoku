@@ -1,25 +1,23 @@
 package com.example.sudoku;
+
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.util.List;
 import java.util.Set;
 
 public class SudokuMain extends Application {
 
     //Start On The autosolve
     GridPane grid;
-
-    SudokuBoard board = new SudokuBoard(new int[][]{
+    Block[][] board = makeBoard(new int[][]{
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
             {6, 0, 0, 1, 9, 5, 0, 0, 0},
             {0, 9, 8, 0, 0, 0, 0, 6, 0},
@@ -48,9 +46,9 @@ public class SudokuMain extends Application {
 
 
         //Inital Setup of Board
-        for (int i = 0; i < board.sBoard.length; i++) {
-            for (int j = 0; j < board.sBoard[0].length; j++) {
-                int temp = board.getCurrent(i, j);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                int temp = board[i][j].current;
                 Label temp2 = new Label();
                 if (temp != 0) {
                     temp2.setText(String.valueOf(temp));
@@ -63,8 +61,8 @@ public class SudokuMain extends Application {
                 }else{
                  //Add gridpane
                   GridPane poss = new GridPane();
-                  Set<Integer> possibles = board.getBlock(i,j).possible;
-                  int len = (int)Math.sqrt(board.sBoard.length);
+                  Set<Integer> possibles = board[i][j].possible;
+                  int len = (int)Math.sqrt(board.length);
                     for (int k = 0; k < len; k++) {
                         for (int l = 0; l < len; l++) {
                             if(possibles.contains((int)(k*len + l)+1)){
@@ -88,9 +86,26 @@ public class SudokuMain extends Application {
         stage.setScene(scene);
         stage.show();
 
-        //board.getBlock(0,2).current = 1;
+        board[0][2].current = 1;
 
-        //update();
+        update();
+    }
+
+    public Block[][] makeBoard(int[][] starter){
+
+        Block[][] sBoard = new Block[starter.length][starter[0].length];
+
+        for (int i = 0; i < starter.length; i++) {
+            for (int j = 0; j < starter[0].length; j++) {
+
+                if(starter[i][j] != 0) {
+                    sBoard[i][j] = new Block(starter[i][j]);
+                }else {
+                    sBoard[i][j] = new Block();
+                }
+            }
+        }
+        return sBoard;
     }
 
     public void update(){
@@ -104,12 +119,12 @@ public class SudokuMain extends Application {
     public void update(int i, int j){
 
         if(nodes[i][j] instanceof Label){
-            if(Integer.parseInt(((Label) nodes[i][j]).getText()) != board.getCurrent(i,j)){
-                ((Label) nodes[i][j]).setText(String.valueOf(board.getCurrent(i,j)));
+            if(Integer.parseInt(((Label) nodes[i][j]).getText()) != board[i][j].current){
+                ((Label) nodes[i][j]).setText(String.valueOf(board[i][j].current));
             }
         }else{
             if(nodes[i][j] instanceof GridPane){
-                if(board.getCurrent(i,j) == 0){
+                if(board[i][j].current == 0){
                     //update gridpane, you can do it my the get children method, and just iterating through the possibles
 
                     ObservableList<Node> possNodes = ((GridPane) nodes[i][j]).getChildren();
@@ -117,7 +132,7 @@ public class SudokuMain extends Application {
 
                     for (Node node: possNodes) {
                         int index = poss.getRowIndex(node)*3 + poss.getColumnIndex(node);
-                        if(board.getBlock(i,j).possible.contains(index+1)){
+                        if(board[i][j].possible.contains(index+1)){
                             ((Label)node).setText(String.valueOf(index+1));
                         }
                     }
@@ -126,7 +141,7 @@ public class SudokuMain extends Application {
                 }else{
                     //Check if there now is a current number, change to label if it is (try a method)
                     Label temp3 = new Label();
-                    temp3.setText(String.valueOf(board.getCurrent(i,j)));
+                    temp3.setText(String.valueOf(board[i][j].current));
                     temp3.setMinHeight(30);
                     temp3.setMinWidth(30);
                     temp3.setFont(new Font(20));
@@ -144,8 +159,8 @@ public class SudokuMain extends Application {
 
     public void replaceNode(int i, int j , Node node){
 
-        grid.getChildren().remove(nodes[i][j]);
-        grid.add(node,i,j);
+        grid.getChildren().remove(nodes[j][i]);
+        grid.add(node,j,i);
 
     }
 }
