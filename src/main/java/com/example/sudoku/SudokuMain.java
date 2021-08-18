@@ -15,7 +15,6 @@ import java.util.Set;
 
 public class SudokuMain extends Application {
 
-    //Start On The autosolve
     GridPane grid;
     Block[][] board = makeBoard(new int[][]{
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
@@ -76,19 +75,12 @@ public class SudokuMain extends Application {
                 }
             }
         }
-
         root.setCenter(grid);
         grid.setAlignment(Pos.CENTER);
 
-
-
-        //stage.setMinHeight(root.getHeight());
-        //.setMinWidth(root.getWidth());
         stage.setTitle("Sudoku");
         stage.setScene(scene);
         stage.show();
-
-
 
 
         for (int i = 0; i < board.length; i++) {
@@ -96,8 +88,6 @@ public class SudokuMain extends Application {
                 solve(i,j);
             }
         }
-
-
 
     }
 
@@ -153,11 +143,10 @@ public class SudokuMain extends Application {
             if(Integer.parseInt(((Label) nodes[i][j]).getText()) != board[i][j].current){
                 ((Label) nodes[i][j]).setText(String.valueOf(board[i][j].current));
             }
+
         }else{
             if(nodes[i][j] instanceof GridPane){
                 if(board[i][j].current == 0){
-                    //update gridpane, you can do it my the get children method, and just iterating through the possibles
-
 
                     ObservableList<Node> possNodes = ((GridPane) nodes[i][j]).getChildren();
                     GridPane poss = (GridPane)nodes[i][j];
@@ -170,7 +159,6 @@ public class SudokuMain extends Application {
                             ((Label)node).setText(String.valueOf(index+1));
                         }
                     }
-
 
                 }else{
                     //Check if there now is a current number, change to label if it is (try a method)
@@ -195,7 +183,6 @@ public class SudokuMain extends Application {
             board[i][j].current = board[i][j].possible.iterator().next();
             System.out.println("Solved: " + board[i][j].current);
             update(i,j);
-
             solve(i,j);
         }else{
             update(i,j);
