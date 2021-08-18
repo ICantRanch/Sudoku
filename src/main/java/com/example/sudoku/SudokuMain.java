@@ -120,56 +120,21 @@ public class SudokuMain extends Application {
 
     public void solve(int i, int j){
 
-
         if(board[i][j].current == 0){return;}
-
         int current = board[i][j].current;
 
         for (int k = 0; k < board.length; k++) {
-            board[i][k].possible.remove(current);
-
-            if(board[i][k].possible.size() == 1){
-                board[i][k].current = board[i][k].possible.iterator().next();
-                System.out.println("Solved: " + board[i][k].current);
-                update(i,k);
-                solve(i,k);
-            }else{
-                update(i,k);
-            }
+            removePossibles(i,k,current);
         }
-
         for (int k = 0; k < board.length; k++) {
-            board[k][j].possible.remove(current);
-
-            if(board[k][j].possible.size() == 1){
-                board[k][j].current = board[k][j].possible.iterator().next();
-                System.out.println("Solved: " + board[k][j].current);
-                update(k,j);
-
-
-
-                solve(k,j);
-            }else{
-                update(k,j);
-            }
+            removePossibles(k,j,current);
         }
         int row = i/3;
         int column = j/3;
 
-
         for (int k = row*3; k < (row*3)+3; k++) {
             for (int l = column*3; l < (column*3)+3; l++) {
-                board[k][l].possible.remove(current);
-
-                if(board[k][l].possible.size() == 1){
-                    board[k][l].current = board[k][l].possible.iterator().next();
-                    System.out.println("Solved: " + board[k][l].current);
-                    update(k,l);
-
-                    solve(k,l);
-                }else{
-                    update(k,l);
-                }
+                removePossibles(k,l,current);
             }
         }
     }
@@ -222,6 +187,20 @@ public class SudokuMain extends Application {
         }
     }
 
+    public void removePossibles(int i, int j, int current){
+
+        board[i][j].possible.remove(current);
+
+        if(board[i][j].possible.size() == 1){
+            board[i][j].current = board[i][j].possible.iterator().next();
+            System.out.println("Solved: " + board[i][j].current);
+            update(i,j);
+
+            solve(i,j);
+        }else{
+            update(i,j);
+        }
+    }
 
     public void replaceNode(int i, int j , Node node){
 
