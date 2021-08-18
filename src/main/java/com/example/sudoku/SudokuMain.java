@@ -6,8 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -81,17 +80,25 @@ public class SudokuMain extends Application {
         root.setCenter(grid);
         grid.setAlignment(Pos.CENTER);
 
+
+
         //stage.setMinHeight(root.getHeight());
         //.setMinWidth(root.getWidth());
         stage.setTitle("Sudoku");
         stage.setScene(scene);
         stage.show();
 
+
+
+
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 solve(i,j);
             }
         }
+
+
+
     }
 
     public Block[][] makeBoard(int[][] starter){
@@ -112,6 +119,7 @@ public class SudokuMain extends Application {
     }
 
     public void solve(int i, int j){
+
 
         if(board[i][j].current == 0){return;}
 
@@ -145,11 +153,25 @@ public class SudokuMain extends Application {
                 update(k,j);
             }
         }
+        int row = i/3;
+        int column = j/3;
 
-        //for each block in a row or column, remove the possible and test if possibles has only 1 remaining
 
+        for (int k = row*3; k < (row*3)+3; k++) {
+            for (int l = column*3; l < (column*3)+3; l++) {
+                board[k][l].possible.remove(current);
 
+                if(board[k][l].possible.size() == 1){
+                    board[k][l].current = board[k][l].possible.iterator().next();
+                    System.out.println("Solved: " + board[k][l].current);
+                    update(k,l);
 
+                    solve(k,l);
+                }else{
+                    update(k,l);
+                }
+            }
+        }
     }
 
     public void update(){
@@ -196,18 +218,14 @@ public class SudokuMain extends Application {
                     temp3.setAlignment(Pos.CENTER);
                     replaceNode(i,j,temp3);
                 }
-
-
-
-
             }
         }
-
     }
+
 
     public void replaceNode(int i, int j , Node node){
 
-        grid.getChildren().remove(nodes[j][i]);
+        grid.getChildren().remove(nodes[i][j]);
         grid.add(node,j,i);
 
     }
