@@ -49,7 +49,6 @@ public class SudokuMain extends Application {
         grid = new GridPane();
         grid.setGridLinesVisible(true);
 
-
         //Initial Setup of Board
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
@@ -64,7 +63,6 @@ public class SudokuMain extends Application {
                     grid.add(temp2, j, i);
                     nodes[i][j] = temp2;
                 }else{
-                 //Add gridpane
                   GridPane poss = new GridPane();
                   Set<Integer> possibles = board[i][j].possible;
                   int len = (int)Math.sqrt(board.length);
@@ -88,16 +86,12 @@ public class SudokuMain extends Application {
         stage.setScene(scene);
         stage.show();
 
-
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
 
                 solve(i, j);
             }
         }
-
-
-
     }
 
     public Block[][] makeBoard(int[][] starter){
@@ -122,7 +116,6 @@ public class SudokuMain extends Application {
         if(board[i][j].current == 0){return;}
 
         new Thread(){
-
             public void run(){
 
                 for (int i = 0; i < board.length ; i++) {
@@ -134,6 +127,7 @@ public class SudokuMain extends Application {
                         }
                         int finalI = i;
                         int finalJ = j;
+
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
