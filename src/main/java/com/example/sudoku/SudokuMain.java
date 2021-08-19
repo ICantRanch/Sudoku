@@ -89,33 +89,14 @@ public class SudokuMain extends Application {
         stage.show();
 
 
-        new Thread(){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
 
-            public void run(){
-
-                for (int i = 0; i < board.length ; i++) {
-                    for (int j = 0; j < board.length; j++) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        int finalI = i;
-                        int finalJ = j;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                solve(finalI, finalJ);
-                            }
-                        });
-
-
-                    }
-                }
+                solve(i, j);
             }
+        }
 
-        }.start();
+
 
     }
 
@@ -139,22 +120,46 @@ public class SudokuMain extends Application {
     public void solve(int i, int j){
 
         if(board[i][j].current == 0){return;}
-        int current = board[i][j].current;
 
-        for (int k = 0; k < board.length; k++) {
-            removePossibles(i,k,current);
-        }
-        for (int k = 0; k < board.length; k++) {
-            removePossibles(k,j,current);
-        }
-        int row = i/3;
-        int column = j/3;
+        new Thread(){
 
-        for (int k = row*3; k < (row*3)+3; k++) {
-            for (int l = column*3; l < (column*3)+3; l++) {
-                removePossibles(k,l,current);
+            public void run(){
+
+                for (int i = 0; i < board.length ; i++) {
+                    for (int j = 0; j < board.length; j++) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        int finalI = i;
+                        int finalJ = j;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                int current = board[finalI][finalJ].current;
+
+                                for (int k = 0; k < board.length; k++) {
+                                    removePossibles(finalI,k,current);
+                                }
+                                for (int k = 0; k < board.length; k++) {
+                                    removePossibles(k, finalJ,current);
+                                }
+                                int row = finalI /3;
+                                int column = finalJ /3;
+
+                                for (int k = row*3; k < (row*3)+3; k++) {
+                                    for (int l = column*3; l < (column*3)+3; l++) {
+                                        removePossibles(k,l,current);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
             }
-        }
+        }.start();
     }
 
     public void update(){
@@ -209,6 +214,7 @@ public class SudokuMain extends Application {
 
         if(board[i][j].possible.size() == 1){
             board[i][j].current = board[i][j].possible.iterator().next();
+            board[i][j].possible.clear();
             System.out.println("Solved: " + board[i][j].current);
             update(i,j);
             solve(i,j);
@@ -221,6 +227,5 @@ public class SudokuMain extends Application {
 
         grid.getChildren().remove(nodes[i][j]);
         grid.add(node,j,i);
-
     }
 }
