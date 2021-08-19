@@ -1,7 +1,12 @@
 package com.example.sudoku;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.Set;
 
@@ -44,7 +50,7 @@ public class SudokuMain extends Application {
         grid.setGridLinesVisible(true);
 
 
-        //Inital Setup of Board
+        //Initial Setup of Board
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 int temp = board[i][j].current;
@@ -64,7 +70,7 @@ public class SudokuMain extends Application {
                   int len = (int)Math.sqrt(board.length);
                     for (int k = 0; k < len; k++) {
                         for (int l = 0; l < len; l++) {
-                            if(possibles.contains((int)(k*len + l)+1)){
+                            if(possibles.contains((k*len + l)+1)){
                                 poss.add(new Label(String.valueOf(k*len+l+1)),l,k);
                             }
                         }
@@ -83,11 +89,33 @@ public class SudokuMain extends Application {
         stage.show();
 
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                solve(i,j);
+        new Thread(){
+
+            public void run(){
+
+                for (int i = 0; i < board.length ; i++) {
+                    for (int j = 0; j < board.length; j++) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        int finalI = i;
+                        int finalJ = j;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                solve(finalI, finalJ);
+                            }
+                        });
+
+
+                    }
+                }
             }
-        }
+
+        }.start();
 
     }
 
