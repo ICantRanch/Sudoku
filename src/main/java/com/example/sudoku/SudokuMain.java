@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -92,6 +93,8 @@ public class SudokuMain extends Application {
                 solve(i, j);
             }
         }
+
+        ((Label)nodes[2][2]).setTextFill(Color.MEDIUMBLUE);
     }
 
     public Block[][] makeBoard(int[][] starter){
@@ -113,7 +116,11 @@ public class SudokuMain extends Application {
 
     public void solve(int i, int j){
 
-        if(board[i][j].current == 0){return;}
+
+        if(nodes[i][j] instanceof GridPane){return;}
+
+        Paint prev = ((Label)nodes[i][j]).getTextFill();
+        ((Label)nodes[i][j]).setTextFill(Color.MEDIUMBLUE);
 
         new Thread(){
             public void run(){
@@ -133,6 +140,8 @@ public class SudokuMain extends Application {
                             public void run() {
 
                                 int current = board[finalI][finalJ].current;
+
+                                ((Label)nodes[finalI][finalJ]).setTextFill(prev);
 
                                 for (int k = 0; k < board.length; k++) {
                                     removePossibles(finalI,k,current);
