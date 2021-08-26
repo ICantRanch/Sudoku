@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -117,6 +118,8 @@ public class SudokuMain extends Application {
                 for (int i = 0; i < board.length; i++) {
                     for (int j = 0; j < board.length; j++) {
                         if(board[i][j].current == 0){continue;}
+                        Paint prev = ((Label)nodes[i][j]).getTextFill();
+                        ((Label)nodes[i][j]).setTextFill(Color.BLUE);
 
                         try {
                             Thread.sleep(1000);
@@ -130,6 +133,7 @@ public class SudokuMain extends Application {
                             @Override
                             public void run() {
                                 solve(finalI, finalJ);
+                                ((Label)nodes[finalI][finalJ]).setTextFill(prev);
                             }
                         });
                     }
@@ -146,8 +150,6 @@ public class SudokuMain extends Application {
 
         for (int k = 0; k < board.length; k++) {
             removePossibles(i,k,current);
-        }
-        for (int k = 0; k < board.length; k++) {
             removePossibles(k,j,current);
         }
         int row = i/3;
@@ -215,7 +217,21 @@ public class SudokuMain extends Application {
             System.out.println("Solved: " + board[i][j].current);
             board[i][j].possible.clear();
             update(i,j);
-            solve(i,j);
+
+            new Thread(){
+                public void run(){
+
+                    try{
+                        Thread.sleep(1000);
+                    }catch(Exception e){
+                    }
+                    Platform.runLater(new Runnable(){
+                        public void run(){
+                            solve(i,j);
+                        }
+                    });
+                }
+            }.start();
         }else{
             update(i,j);
         }
