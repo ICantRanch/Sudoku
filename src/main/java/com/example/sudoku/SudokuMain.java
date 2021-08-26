@@ -88,34 +88,7 @@ public class SudokuMain extends Application {
         stage.setScene(scene);
         stage.show();
 
-
-        new Thread(){
-
-            public void run(){
-
-                for (int i = 0; i < board.length ; i++) {
-                    for (int j = 0; j < board.length; j++) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        int finalI = i;
-                        int finalJ = j;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                solve(finalI, finalJ);
-                            }
-                        });
-
-
-                    }
-                }
-            }
-
-        }.start();
+        solveAll();
 
     }
 
@@ -135,6 +108,36 @@ public class SudokuMain extends Application {
         }
         return sBoard;
     }
+
+    public void solveAll(){
+
+        new Thread(){
+            public void run(){
+
+                for (int i = 0; i < board.length; i++) {
+                    for (int j = 0; j < board.length; j++) {
+                        if(board[i][j].current == 0){continue;}
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        int finalI = i;
+                        int finalJ = j;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                solve(finalI, finalJ);
+                            }
+                        });
+                    }
+                }
+            }
+        }.start();
+    }
+
 
     public void solve(int i, int j){
 
@@ -210,6 +213,7 @@ public class SudokuMain extends Application {
         if(board[i][j].possible.size() == 1){
             board[i][j].current = board[i][j].possible.iterator().next();
             System.out.println("Solved: " + board[i][j].current);
+            board[i][j].possible.clear();
             update(i,j);
             solve(i,j);
         }else{
