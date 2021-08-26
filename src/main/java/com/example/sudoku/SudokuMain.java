@@ -123,6 +123,7 @@ public class SudokuMain extends Application {
 
                         try {
                             Thread.sleep(1000);
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -203,6 +204,7 @@ public class SudokuMain extends Application {
                     temp3.setTextFill(Color.LIMEGREEN);
                     temp3.setAlignment(Pos.CENTER);
                     replaceNode(i,j,temp3);
+                    nodes[i][j] = temp3;
                 }
             }
         }
@@ -221,6 +223,9 @@ public class SudokuMain extends Application {
             new Thread(){
                 public void run(){
 
+                    Paint prev = ((Label)nodes[i][j]).getTextFill();
+                    ((Label)nodes[i][j]).setTextFill(Color.AQUA);
+
                     try{
                         Thread.sleep(1000);
                     }catch(Exception e){
@@ -228,6 +233,7 @@ public class SudokuMain extends Application {
                     Platform.runLater(new Runnable(){
                         public void run(){
                             solve(i,j);
+                            ((Label)nodes[i][j]).setTextFill(prev);
                         }
                     });
                 }
